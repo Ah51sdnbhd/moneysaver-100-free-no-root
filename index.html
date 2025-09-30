@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catatan Keuangan - Modern</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-start: #6D83F2;
+      --bg-end: #A8B5FF;
+      --card-bg: rgba(255, 255, 255, 0.25);
+      --accent: #5E72E4;
+      --danger: #F5365C;
+      --success: #2DCE89;
+      --text-main: #212529;
+      --text-muted: #8898AA;
+      --border-color: rgba(255, 255, 255, 0.4);
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(120deg, var(--bg-start), var(--bg-end));
+      color: var(--text-main);
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding: 0 10px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 2px 4px var(--shadow-color);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px 0 var(--shadow-color);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .row {
+      display: flex;
+      gap: 18px;
+    }
+
+    .col {
+      flex: 1;
+    }
+
+    /* form */
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="number"], select, input[type="date"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+      color: var(--text-main);
+      transition: all 0.2s ease-in-out;
+    }
+    input::placeholder {
+      color: var(--text-muted);
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.3);
+    }
+
+
+    .btn {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    }
+    .btn.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      box-shadow: none;
+    }
+    .btn.ghost:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn.danger {
+      background: var(--danger);
+    }
+
+    /* totals */
+    .totals {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--border-color);
+      min-width: 150px;
+      font-weight: 500;
+    }
+    .chip strong {
+        font-weight: 600;
+    }
+    
+    #totalBalance {
+        color: var(--accent);
+        font-size: 1.1em;
+    }
+    #totalIn {
+        color: var(--success);
+    }
+    #totalOut {
+        color: var(--danger);
+    }
+
+    /* table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    
+    tbody tr {
+        transition: background-color 0.15s ease-in-out;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    td small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    
+    td .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    /* small */
+    .muted {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+    }
+
+    /* filter section */
+    .filter-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filter-controls select, .filter-controls .btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        height: 40px;
+    }
+
+
+    /* responsive */
+    @media (max-width: 992px) {
+        .filter-controls {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+        .totals {
+            margin-bottom: 16px;
+        }
+    }
+
+    @media (max-width: 720px) {
+      .row {
+        flex-direction: column;
+      }
+      .totals {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .chip {
+        width: 100%;
+      }
+      header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+    }
+
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>📒 Catatan Keuangan</h1>
+      <div class="muted">Auto-save ke browser (localStorage)</div>
+    </header>
+
+    <section class="card">
+      <div class="grid">
+        <div class="row">
+          <div class="col">
+            <label for="type">Tipe</label>
+            <select id="type">
+              <option value="Pengeluaran">Pengeluaran</option>
+              <option value="Pemasukan">Pemasukan</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="amount">Jumlah (Rp)</label>
+            <input id="amount" type="number" placeholder="contoh: 50000" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="category">Kategori</label>
+            <input id="category" type="text" placeholder="Jajan, Bensin, Gaji..." />
+          </div>
+          <div class="col">
+            <label for="date">Tanggal</label>
+            <input id="date" type="date" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="note">Keterangan (opsional)</label>
+            <input id="note" type="text" placeholder="Catatan singkat" />
+          </div>
+          <div style="width:180px; display:flex; flex-direction:column; gap:8px; justify-content:flex-end">
+            <button id="saveBtn" class="btn">Simpan</button>
+            <button id="resetForm" class="btn ghost">Bersihkan</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="align-items:flex-start;justify-content:space-between; flex-wrap: wrap;">
+        <div class="totals">
+          <div class="chip"><strong id="totalBalance">Saldo: Rp 0</strong></div>
+          <div class="chip">Pemasukan: <strong id="totalIn">Rp 0</strong></div>
+          <div class="chip">Pengeluaran: <strong id="totalOut">Rp 0</strong></div>
+        </div>
+
+        <div class="filter-controls">
+          <select id="filterMonth">
+            <option value="all">Semua bulan</option>
+          </select>
+          <select id="filterType">
+            <option value="all">Semua tipe</option>
+            <option value="Pemasukan">Pemasukan</option>
+            <option value="Pengeluaran">Pengeluaran</option>
+          </select>
+          <select id="filterCategory"><option value="all">Semua kategori</option></select>
+          <button id="exportCsv" class="btn ghost">Export CSV</button>
+          <input id="importFile" type="file" accept="text/csv" style="display:none" />
+          <button id="importBtn" class="btn ghost">Import CSV</button>
+          <button id="clearAll" class="btn danger">Hapus Semua</button>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table id="table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Tipe</th>
+                <th>Kategori</th>
+                <th>Jumlah</th>
+                <th>Keterangan</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+      </div>
+    </section>
+
+    <footer>
+        Mau fitur tambahan? Contoh: backup ke Google Drive, dark mode, atau export PDF — bilang saja.
+    </footer>
+  </div>
+
+  <script>
+    // Storage key
+    const KEY = 'catatan_keuangan_v2_modern' // renamed key to avoid conflict
+
+    // DOM
+    const typeEl = document.getElementById('type')
+    const amountEl = document.getElementById('amount')
+    const categoryEl = document.getElementById('category')
+    const dateEl = document.getElementById('date')
+    const noteEl = document.getElementById('note')
+    const saveBtn = document.getElementById('saveBtn')
+    const resetForm = document.getElementById('resetForm')
+
+    const totalBalanceEl = document.getElementById('totalBalance')
+    const totalInEl = document.getElementById('totalIn')
+    const totalOutEl = document.getElementById('totalOut')
+
+    const tbody = document.querySelector('#table tbody')
+    const filterMonth = document.getElementById('filterMonth')
+    const filterType = document.getElementById('filterType')
+    const filterCategory = document.getElementById('filterCategory')
+    const exportCsv = document.getElementById('exportCsv')
+    const importBtn = document.getElementById('importBtn')
+    const importFile = document.getElementById('importFile')
+    const clearAllBtn = document.getElementById('clearAll')
+
+    let data = []
+    let editId = null
+
+    // helpers
+    const todayISO = ()=>{ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10)}
+    const fmtRp = v => {
+      try{ return new Intl.NumberFormat('id-ID').format(Number(v)) }catch(e){return v}
+    }
+
+    // init
+    function load(){
+      const raw = localStorage.getItem(KEY)
+      if(raw) data = JSON.parse(raw)
+      else data = []
+
+      // populate filters
+      populateFilters()
+      render()
+    }
+
+    function saveStore(){
+      localStorage.setItem(KEY, JSON.stringify(data))
+    }
+
+    function render(){
+      // apply filters
+      const m = filterMonth.value
+      const t = filterType.value
+      const c = filterCategory.value
+
+      const rows = data.filter(x=>{
+        if(m!=='all'){
+          const ym = x.tanggal.slice(0,7) // yyyy-mm
+          if(ym !== m) return false
+        }
+        if(t!=='all' && x.tipe !== t) return false
+        if(c!=='all' && x.kategori !== c) return false
+        return true
+      })
+      
+      // sort by date descending
+      rows.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+
+      // table
+      tbody.innerHTML = ''
+      rows.forEach(item=>{
+        const tr = document.createElement('tr')
+        const amountClass = item.tipe === 'Pemasukan' ? 'pos' : 'neg';
+        tr.innerHTML = `
+          <td>${item.tanggal}</td>
+          <td>${item.tipe}</td>
+          <td>${item.kategori}</td>
+          <td style="font-weight: 500;">Rp ${fmtRp(item.jumlah)}</td>
+          <td><small>${item.keterangan||'&#8212;'}</small></td>
+          <td style="display:flex; gap: 6px;">
+            <button class="btn ghost" data-id="${item.id}" data-act="edit">Edit</button>
+            <button class="btn danger" data-id="${item.id}" data-act="del">Hapus</button>
+          </td>`
+        tbody.appendChild(tr)
+      })
+
+      // totals (over ALL data, ignoring filters)
+      const totalIn = data.filter(x=>x.tipe==='Pemasukan').reduce((s,v)=>s+Number(v.jumlah),0)
+      const totalOut = data.filter(x=>x.tipe==='Pengeluaran').reduce((s,v)=>s+Number(v.jumlah),0)
+      const balance = totalIn - totalOut
+
+      totalInEl.textContent = 'Rp ' + fmtRp(totalIn)
+      totalOutEl.textContent = 'Rp ' + fmtRp(totalOut)
+      totalBalanceEl.textContent = 'Saldo: Rp ' + fmtRp(balance)
+
+      // rebind actions
+      tbody.querySelectorAll('button').forEach(btn=>{
+        const id = Number(btn.dataset.id)
+        if(btn.dataset.act === 'edit') btn.onclick = ()=>startEdit(id)
+        if(btn.dataset.act === 'del') btn.onclick = ()=>doDelete(id)
+      })
+    }
+
+    function populateFilters(){
+      // months from data
+      const months = new Set()
+      const cats = new Set()
+      data.forEach(d=>{
+        months.add(d.tanggal.slice(0,7))
+        cats.add(d.kategori)
+      })
+      // clear
+      filterMonth.innerHTML = '<option value="all">Semua bulan</option>'
+      Array.from(months).sort((a,b)=>b.localeCompare(a)).forEach(m=>{
+        const opt = document.createElement('option')
+        opt.value = m
+        // show Bln Tahun in label
+        const [y,mm] = m.split('-')
+        const monthName = new Date(m + '-01').toLocaleString('id-ID', { month: 'long' });
+        opt.textContent = `${monthName} ${y}`
+        filterMonth.appendChild(opt)
+      })
+
+      filterCategory.innerHTML = '<option value="all">Semua kategori</option>'
+      Array.from(cats).sort().forEach(ct=>{
+        const o = document.createElement('option')
+        o.value = ct
+        o.textContent = ct
+        filterCategory.appendChild(o)
+      })
+    }
+
+    // add / edit
+    saveBtn.addEventListener('click', ()=>{
+      const tipe = typeEl.value
+      const jumlah = Number(amountEl.value)
+      const kategori = categoryEl.value.trim() || (tipe === 'Pemasukan' ? 'Pemasukan' : 'Lainnya')
+      const tanggal = dateEl.value || todayISO()
+      const keterangan = noteEl.value.trim()
+
+      if(!jumlah || jumlah <= 0) {
+        alert('Isi jumlah yang valid!')
+        amountEl.focus();
+        return;
+      }
+
+      if(editId !== null){
+        const idx = data.findIndex(x=>x.id === editId)
+        if(idx !== -1){
+          data[idx] = { ...data[idx], tipe, jumlah, kategori, tanggal, keterangan }
+        }
+        editId = null
+        saveBtn.textContent = 'Simpan'
+      } else {
+        const id = Date.now()
+        data.push({ id, tipe, jumlah, kategori, tanggal, keterangan })
+      }
+
+      saveStore()
+      populateFilters()
+      render()
+      clearForm()
+    })
+
+    function startEdit(id){
+      const item = data.find(x=>x.id === id)
+      if(!item) return
+      editId = id
+      typeEl.value = item.tipe
+      amountEl.value = item.jumlah
+      categoryEl.value = item.kategori
+      dateEl.value = item.tanggal
+      noteEl.value = item.keterangan
+      saveBtn.textContent = 'Update'
+      window.scrollTo({top: 0, behavior: 'smooth'});
+      amountEl.focus();
+    }
+
+    function doDelete(id){
+      if(!confirm('Yakin mau hapus data ini?')) return
+      data = data.filter(x=>x.id !== id)
+      saveStore()
+      populateFilters()
+      render()
+    }
+
+    function clearForm(){
+      editId = null
+      typeEl.value = 'Pengeluaran'
+      amountEl.value = ''
+      categoryEl.value = ''
+      noteEl.value = ''
+      dateEl.value = todayISO()
+      saveBtn.textContent = 'Simpan'
+    }
+
+    resetForm.addEventListener('click', clearForm)
+
+    // filters
+    [filterMonth, filterType, filterCategory].forEach(f=>f.addEventListener('change', render))
+
+    // export CSV
+    exportCsv.addEventListener('click', ()=>{
+      if(!data.length) return alert('Belum ada data')
+      const header = ['id','tanggal','tipe','kategori','jumlah','keterangan']
+      const rows = data.map(d=>[d.id,d.tanggal,d.tipe,d.kategori,d.jumlah,`"${(d.keterangan||'').replace(/"/g,'""')}"`])
+      const csv = [header.join(','), ...rows.map(r=>r.join(','))].join('\n')
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'})
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'catatan_keuangan_export.csv'
+      document.body.appendChild(a);
+      a.click()
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url)
+    })
+
+    importBtn.addEventListener('click', ()=>importFile.click())
+    importFile.addEventListener('change', (ev)=>{
+      const f = ev.target.files[0]
+      if(!f) return
+      const reader = new FileReader()
+      reader.onload = e=>{
+        try{
+          const text = e.target.result
+          const lines = text.split(/\r?\n/).filter(Boolean)
+          const header = lines.shift().split(',').map(h=>h.trim().replace(/"/g,''))
+          const idxId = header.indexOf('id')
+          const idxTanggal = header.indexOf('tanggal')
+          const idxTipe = header.indexOf('tipe')
+          const idxKategori = header.indexOf('kategori')
+          const idxJumlah = header.indexOf('jumlah')
+          const idxKeterangan = header.indexOf('keterangan')
+          if(idxTanggal===-1 || idxTipe===-1 || idxJumlah===-1){
+            alert('Format CSV tidak dikenali. Pastikan ada kolom tanggal, tipe, dan jumlah.')
+            return
+          }
+          const imported = lines.map(l=>{
+            const cols = l.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g).map(c => c.replace(/"/g, ''));
+            return {
+              id: Number(cols[idxId]) || Date.now() + Math.floor(Math.random()*1000),
+              tanggal: cols[idxTanggal],
+              tipe: cols[idxTipe],
+              kategori: cols[idxKategori] || 'Umum',
+              jumlah: Number(cols[idxJumlah]) || 0,
+              keterangan: cols[idxKeterangan] || ''
+            }
+          })
+          
+          const existingIds = new Set(data.map(d => d.id));
+          const newData = imported.filter(item => !existingIds.has(item.id));
+
+          if (newData.length === 0) {
+            alert('Tidak ada data baru untuk diimpor. Semua data dari file sudah ada.');
+            return;
+          }
+
+          data = [...newData, ...data]
+          saveStore(); populateFilters(); render();
+          alert(`${newData.length} data baru berhasil diimpor!`)
+        }catch(err){
+          alert('Gagal import: ' + err.message)
+        } finally {
+            importFile.value = '';
+        }
+      }
+      reader.readAsText(f)
+    })
+
+    // clear all
+    clearAllBtn.addEventListener('click', ()=>{
+      if(!confirm('HAPUS SEMUA DATA?\nTindakan ini tidak bisa dibatalkan.')) return
+      data = []
+      saveStore(); populateFilters(); render();
+    })
+
+    // set default date
+    if(!dateEl.value) dateEl.value = todayISO()
+
+    // initial load
+    load()
+  </script>
+</body>
+</html>
